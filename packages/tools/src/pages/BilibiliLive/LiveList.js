@@ -127,7 +127,7 @@ function LiveList(props) {
   }, []);
 
   return [
-    <Fragment key="panel" >
+    <Fragment key="panel">
       <BasicPanel header={ panelHeaderRender }>
         <DataGrid data={ bilibiliLiveOptions }>
           <GridColumn field="liveName" title="直播间名称" />

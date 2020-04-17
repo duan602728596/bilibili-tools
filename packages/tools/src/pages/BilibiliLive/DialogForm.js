@@ -42,7 +42,7 @@ function DialogForm(props) {
     const res = await requestRoomPlayUrl(props.playRow.liveId);
     const urls = res.data.data.durl.map((item, index) => ({
       value: item.url,
-      text: `地址{ index + 1 }`
+      text: `地址${ index + 1 }`
     }));
 
     setPlayUrl(urls);
