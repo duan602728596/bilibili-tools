@@ -19,4 +19,5 @@ package.json.lerna_backup
 # packages
 .sweet
 packages/main/lib
+packages/ffmpeg/lib
 packages/ffmpeg/ffmpeg
