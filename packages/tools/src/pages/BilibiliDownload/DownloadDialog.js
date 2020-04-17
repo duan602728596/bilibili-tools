@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import style from './downloadDialog.sass';
 import useMessage from '../../components/useMessage/useMessage';
 import { requestAudioPlayUrl, requestBilibiliVideo } from './services/services';
-import { parsingBilibiliVideoUrl } from './function/parsingVideoUrl';
+import parsingBilibiliVideoUrl from './function/parsingBilibiliVideoUrl';
 
 function DownloadDialog(props) {
   const dispatch = useDispatch();

@@ -47,10 +47,38 @@ function parsingPlayInfo(scripts) {
 }
 
 /**
+ * 根据data获取视频和音频地址
+ * @param { object } data
+ */
+function getVideoAndAudioUrl(data) {
+  const { accept_description, accept_quality, dash } = data;
+  const { audio, video } = dash;
+
+  // 解析视频画质
+  const qualityMap = new Map();
+
+  accept_quality.forEach(function(value, index) {
+    qualityMap.set(value, accept_description[index]);
+  });
+
+  // 拼接地址
+  const audioUrl = audio.map((item, index) => ({
+    value: item.baseUrl,
+    text: `地址${ index + 1 }`
+  }));
+  const videoUrl = video.map((item, index) => ({
+    value: item.baseUrl,
+    text: `地址${ index + 1 }（${ qualityMap.get(item.id) }）`
+  }));
+
+  return { audioUrl, videoUrl };
+}
+
+/**
  * 视频下载
  * @param { string } html: html字符串
  */
-export function parsingBilibiliVideoUrl(html) {
+function parsingBilibiliVideoUrl(html) {
   const dom = new JSDOM(html);
   const { document } = dom.window;
 
@@ -60,26 +88,8 @@ export function parsingBilibiliVideoUrl(html) {
 
   // 需要同时下载视频或者音频，然后合并
   if (playInfo?.data?.dash) {
-    const { accept_description, accept_quality, dash } = playInfo.data;
-    const { audio, video } = dash;
-
-    // 解析视频画质
-    const qualityMap = new Map();
-
-    accept_quality.forEach(function(value, index) {
-      qualityMap.set(value, accept_description[index]);
-    });
-
-    // 拼接地址
-    const audioUrl = audio.map((item, index) => ({
-      value: item.baseUrl,
-      text: `地址${ index + 1 }`
-    }));
-    const videoUrl = video.map((item, index) => ({
-      value: item.baseUrl,
-      text: `地址${ index + 1 }（${ qualityMap.get(item.id) }）`
-    }));
-
-    return { audioUrl, videoUrl };
+    return getVideoAndAudioUrl(playInfo.data);
   }
 }
+
+export default parsingBilibiliVideoUrl;
