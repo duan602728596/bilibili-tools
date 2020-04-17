@@ -7,7 +7,8 @@ import { Dialog, Form, FormField, ComboBox, LinkButton, Label, TextBox } from 'r
 import dayjs from 'dayjs';
 import style from './downloadDialog.sass';
 import useMessage from '../../components/useMessage/useMessage';
-import { requestAudioPlayUrl } from './services/services';
+import { requestAudioPlayUrl, requestBilibiliVideo } from './services/services';
+import { parsingBilibiliVideoUrl } from './function/parsingVideoUrl';
 
 function DownloadDialog(props) {
   const dispatch = useDispatch();
@@ -49,18 +50,36 @@ function DownloadDialog(props) {
 
   // 获取音频地址
   async function getAuUrl() {
-    const { row } = props.downloadRow;
-    const res = await requestAudioPlayUrl(row.bid);
-    const urls = res.data.data.cdns.map((item, index) => ({
-      value: item,
-      text: `线路${ index + 1 }`
-    }));
+    try {
+      const { row } = props.downloadRow;
+      const res = await requestAudioPlayUrl(row.bid);
+      const urls = res.data.data.cdns.map((item, index) => ({
+        value: item,
+        text: `线路${ index + 1 }`
+      }));
 
-    setAudioUrl(urls);
+      setAudioUrl(urls);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // 获取av地址
+  async function getVideoUrl() {
+    try {
+      const { row } = props.downloadRow;
+      const res = await requestBilibiliVideo(row.type, row.bid);
+      const urlResult = parsingBilibiliVideoUrl(res.data);
+
+      setVideoUrl(urlResult.videoUrl);
+      setAudioUrl(urlResult.audioUrl);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   // 获取地址
-  function getVideoUrl() {
+  function getMediaUrl() {
     if (!props.downloadRow) return;
 
     dialogRef.current.open();
@@ -70,6 +89,8 @@ function DownloadDialog(props) {
     // 下载音频
     if (row.type === 'au') {
       getAuUrl();
+    } else if (row.type === 'av' || row.type === 'bv') {
+      getVideoUrl();
     }
   }
 
@@ -83,7 +104,7 @@ function DownloadDialog(props) {
     } else {
       rules.videoUrl = ['required'];
 
-      if (audioUrl.length >= 0) {
+      if (audioUrl && audioUrl.length >= 0) {
         rules.audioUrl = ['required'];
       }
     }
@@ -92,7 +113,7 @@ function DownloadDialog(props) {
   }
 
   useEffect(function() {
-    getVideoUrl();
+    getMediaUrl();
   }, [props.downloadRow]);
 
   return [
