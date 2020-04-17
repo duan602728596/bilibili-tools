@@ -1,0 +1,10 @@
+@mixin icon
+  background-repeat: no-repeat
+  background-position: center center
+
+.copy
+  background: url('./images/copy_16px.png')
+  @include icon
+
+.smallIcon :global(.l-btn-icon)
+  background-size: 16px
