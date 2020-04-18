@@ -116,7 +116,12 @@ function LiveList(props) {
               ? <LinkButton iconCls="icon-no" onClick={ () => handleStopClick(item) }>停止录制</LinkButton>
               : <LinkButton iconCls="icon-tip" onClick={ () => handleDownloadClick(item) }>开始录制</LinkButton>
           }
-          <LinkButton iconCls="icon-remove" onClick={ () => handleDeleteOptionClick(item) }>删除</LinkButton>
+          <LinkButton iconCls="icon-remove"
+            disabled={ inLive ? true : undefined }
+            onClick={ () => handleDeleteOptionClick(item) }
+          >
+            删除
+          </LinkButton>
         </ButtonGroup>
       </div>
     );

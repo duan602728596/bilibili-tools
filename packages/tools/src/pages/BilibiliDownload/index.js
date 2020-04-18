@@ -15,15 +15,21 @@ import models, { setDownloadList } from './models/models';
 
 /* state */
 const state = createStructuredSelector({
+  // 下载列表
   bilibiliDownload: createSelector(
     ({ bilibiliDownload: $$bilibiliDownload }) => $$bilibiliDownload?.get?.('downloadList'),
+    (data) => data?.toJS?.() ?? []
+  ),
+  // ffmpeg下载进程
+  ffmpegChildList: createSelector(
+    ({ bilibiliDownload: $$bilibiliDownload }) => $$bilibiliDownload?.get?.('ffmpegChildList'),
     (data) => data?.toJS?.() ?? []
   )
 });
 
 /* B站视频下载 */
 function BilibiliDownload(props) {
-  const { bilibiliDownload } = useSelector(state);
+  const { bilibiliDownload, ffmpegChildList } = useSelector(state);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const addFormRef = useRef(null);
@@ -36,8 +42,8 @@ function BilibiliDownload(props) {
   }
 
   // 视频下载，获取下载地址
-  function handleDownloadGetUrlClick(item) {
-    setDownloadRow(item);
+  function handleDownloadGetUrlClick(row) {
+    setDownloadRow(row);
   }
 
   // 添加下载队列
@@ -82,11 +88,24 @@ function BilibiliDownload(props) {
 
   // 渲染操作菜单
   function handleOperationRender(item) {
+    const index = findIndex(ffmpegChildList, (o) => o.row.id === item.row.id);
+    const inDownload = index >= 0;
+    const canStop = inDownload && ffmpegChildList[index]?.child;
+
     return (
       <div className={ style.tableBtn }>
         <ButtonGroup>
-          <LinkButton iconCls="icon-tip" onClick={ () => handleDownloadGetUrlClick(item) }>开始下载</LinkButton>
-          <LinkButton iconCls="icon-remove" onClick={ () => handleDeleteClick(item) }>删除</LinkButton>
+          {
+            inDownload
+              ? <LinkButton iconCls="icon-no" disabled={ canStop ? true : undefined }>停止下载</LinkButton>
+              : <LinkButton iconCls="icon-tip" onClick={ () => handleDownloadGetUrlClick(item.row) }>开始下载</LinkButton>
+          }
+          <LinkButton iconCls="icon-remove"
+            disabled={ inDownload ? true : undefined }
+            onClick={ () => handleDeleteClick(item) }
+          >
+            删除
+          </LinkButton>
         </ButtonGroup>
       </div>
     );

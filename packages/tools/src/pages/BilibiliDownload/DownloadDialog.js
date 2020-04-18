@@ -9,8 +9,24 @@ import style from './downloadDialog.sass';
 import useMessage from '../../components/useMessage/useMessage';
 import { requestAudioPlayUrl, requestBilibiliVideo } from './services/services';
 import parsingBilibiliVideoUrl from './function/parsingBilibiliVideoUrl';
+import BilibiliDownload from './function/BilibiliDownload';
+import { setDownloadList, setFfmpegChildList } from './models/models';
+
+/* state */
+const state = createStructuredSelector({
+  bilibiliDownload: createSelector(
+    ({ bilibiliDownload: $$bilibiliDownload }) => $$bilibiliDownload?.get?.('downloadList'),
+    (data) => data?.toJS?.() ?? []
+  ),
+  // ffmpeg下载进程
+  ffmpegChildList: createSelector(
+    ({ bilibiliDownload: $$bilibiliDownload }) => $$bilibiliDownload?.get?.('ffmpegChildList'),
+    (data) => data?.toJS?.() ?? []
+  )
+});
 
 function DownloadDialog(props) {
+  const { bilibiliDownload, ffmpegChildList } = useSelector(state);
   const dispatch = useDispatch();
   const formRef = useRef(null),
     dialogRef = useRef(null);
@@ -36,7 +52,7 @@ function DownloadDialog(props) {
 
   // 选择保存位置
   async function handleFileSaveClick(event) {
-    const { row } = props.downloadRow;
+    const row = props.downloadRow;
     const ext = row.type === 'au' ? 'm4a' : 'mp4';
     const time = dayjs().format('YYYY.MM.DD.HH.mm.ss');
     const result = await remote.dialog.showSaveDialog({
@@ -54,7 +70,7 @@ function DownloadDialog(props) {
     setLoading(true);
 
     try {
-      const { row } = props.downloadRow;
+      const row = props.downloadRow;
       const res = await requestAudioPlayUrl(row.bid);
       const urls = res.data.data.cdns.map((item, index) => ({
         value: item,
@@ -74,7 +90,7 @@ function DownloadDialog(props) {
     setLoading(true);
 
     try {
-      const { row } = props.downloadRow;
+      const row = props.downloadRow;
       const res = await requestBilibiliVideo(row.type, row.bid, row.page);
       const urlResult = await parsingBilibiliVideoUrl(res.data, row);
 
@@ -93,7 +109,7 @@ function DownloadDialog(props) {
 
     dialogRef.current.open();
 
-    const { row } = props.downloadRow;
+    const row = props.downloadRow;
 
     // 下载音频
     if (row.type === 'au') {
@@ -108,13 +124,23 @@ function DownloadDialog(props) {
     formRef.current.validate((err) => {
       if (err) return;
 
-      console.log(formValue);
+      const download = new BilibiliDownload({
+        ...formValue,
+        row: props.downloadRow
+      });
+
+      download.ffmpegInit();
+      ffmpegChildList.push(download);
+      ffmpegChildList |> setFfmpegChildList |> dispatch;
+      bilibiliDownload |> setDownloadList |> dispatch;
+      message.alert({ msg: '开始下载。' });
+      handleDialogClose();
     });
   }
 
   // rules
   function formRules() {
-    const row = props.downloadRow?.row;
+    const row = props.downloadRow;
     const rules = { file: ['required'] };
 
     if (row && row.type === 'au') {
@@ -145,7 +171,7 @@ function DownloadDialog(props) {
           onChange={ handleFormChange }
         >
           <Label>下载类型：</Label>
-          { props?.downloadRow?.row.type.toLocaleUpperCase() }
+          { props?.downloadRow?.type.toLocaleUpperCase() }
           <FormField name="videoUrl" label="视频地址：">
             <ComboBox value={ formValue.videoUrl } data={ videoUrl } />
           </FormField>

@@ -43,11 +43,14 @@ export default function(info) {
         '@bilibili-tools/ffmpeg',
         'child_process',
         'electron',
+        'fs',
         'got',
         'jsdom',
         'path',
         'querystring',
-        'url'
+        'stream',
+        'url',
+        'util'
       ]),
       'rc-easyui': 'globalThis.EasyUI'
     },

@@ -1,5 +1,8 @@
 import querystring from 'querystring';
-import request from '../../../utils/request';
+import request, { httpStreamRequest } from '../../../utils/request';
+
+const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36'
+  + ' (KHTML, like Gecko) Chrome/80.0.3987.162 Safari/537.36 Edg/80.0.361.109';
 
 /**
  * 获取音频接口
@@ -28,8 +31,7 @@ export function requestBilibiliVideo(type, id, page = 1) {
     responseType: 'text',
     headers: {
       Host: 'www.bilibili.com',
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36'
-        + ' (KHTML, like Gecko) Chrome/80.0.3987.162 Safari/537.36 Edg/80.0.361.109'
+      'User-Agent': UA
     }
   });
 }
@@ -54,5 +56,24 @@ export function requestPlayUrl(avid, cid, sessData) {
     headers: {
       Cookie: sessData ? `SESSDATA=${ sessData }; CURRENT_QUALITY=80;` : undefined
     }
+  });
+}
+
+/**
+ * 下载媒体文件
+ * @param { string } file: 文件
+ * @param { string } uri: 文件地址
+ * @param { string } type: 类型
+ * @param { string } bid
+ */
+export function requestDownloadMedia(file, uri, type, bid) {
+  const t = type === 'au' ? 'audio' : 'video';
+  const s = type === 'au' ? 'au' : (type === 'av' ? 'av' : 'BV');
+
+  return httpStreamRequest(file, uri, {
+    Referer: `https://www.bilibili.com/${ t }/${ s }${ bid }`,
+    Range: 'bytes=0-',
+    'User-Agent': UA,
+    Origin: 'https://www.bilibili.com'
   });
 }

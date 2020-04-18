@@ -9,7 +9,7 @@ import style from './dialogForm.sass';
 import useMessage from '../../components/useMessage/useMessage';
 import BilibiliLive from './function/BilibiliLive';
 import { requestRoomPlayUrl } from './services/services';
-import { setBilibiliLiveOptions, setFffmpegChildList } from './models/models';
+import { setBilibiliLiveOptions, setFfmpegChildList } from './models/models';
 
 /* state */
 const state = createStructuredSelector({
@@ -90,7 +90,7 @@ function DialogForm(props) {
 
       live.ffmpegInit();
       ffmpegChildList.push(live);
-      ffmpegChildList |> setFffmpegChildList |> dispatch;
+      ffmpegChildList |> setFfmpegChildList |> dispatch;
       ({ result: bilibiliLiveOptions }) |> setBilibiliLiveOptions |> dispatch;
       message.alert({ msg: '开始录制。' });
       handleDialogClose();

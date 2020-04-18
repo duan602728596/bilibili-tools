@@ -1,4 +1,23 @@
+import util from 'util';
+import stream from 'stream';
+import fs from 'fs';
 import got from 'got';
+
+const pipeline = util.promisify(stream.pipeline);
+
+/**
+ * 流请求，下载视频和音频
+ * @param { string } file: 文件
+ * @param { string } uri: 请求地址
+ * @param { object } options: http.request的配置
+ */
+export async function httpStreamRequest(file, uri, options) {
+  const req = got.stream(uri, options);
+
+  await pipeline(req, fs.createWriteStream(file));
+
+  return req;
+}
 
 /**
  * 请求方法

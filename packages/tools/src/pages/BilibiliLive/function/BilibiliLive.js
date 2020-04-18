@@ -3,7 +3,7 @@ import path from 'path';
 import { findIndex } from 'lodash-es';
 import { ffmpeg } from '../../../utils/utils';
 import store from '../../../store/store';
-import { setFffmpegChildList, setBilibiliLiveOptions } from '../models/models';
+import { setFfmpegChildList, setBilibiliLiveOptions } from '../models/models';
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko)'
   + ' Chrome/77.0.3865.90 Safari/537.36';
@@ -44,7 +44,7 @@ class BilibiliLive {
     const index = findIndex(ffmpegChildList, (o) => o.row.id === this.row.id);
 
     ffmpegChildList.splice(index, 1);
-    ffmpegChildList |> setFffmpegChildList |> store.dispatch;
+    ffmpegChildList |> setFfmpegChildList |> store.dispatch;
     ({ result: bilibiliLiveOptions }) |> setBilibiliLiveOptions |> store.dispatch;
   }
 

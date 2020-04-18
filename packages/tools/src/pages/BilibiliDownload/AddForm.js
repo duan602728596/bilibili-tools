@@ -8,6 +8,7 @@ import { setDownloadList } from './models/models';
 
 /* state */
 const state = createStructuredSelector({
+  // 下载列表
   bilibiliDownload: createSelector(
     ({ bilibiliDownload: $$bilibiliDownload }) => $$bilibiliDownload?.get?.('downloadList'),
     (data) => data?.toJS?.() ?? []
@@ -15,7 +16,7 @@ const state = createStructuredSelector({
 });
 
 const AddForm = forwardRef(function(props, ref) {
-  const { bilibiliDownload } = useSelector(state);
+  const { bilibiliDownload, ffmpegChildList } = useSelector(state);
   const dispatch = useDispatch();
   const formRef = useRef(null),
     dialogRef = useRef(null);
