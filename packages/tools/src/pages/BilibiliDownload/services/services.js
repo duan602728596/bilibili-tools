@@ -71,9 +71,11 @@ export function requestDownloadMedia(file, uri, type, bid) {
   const s = type === 'au' ? 'au' : (type === 'av' ? 'av' : 'BV');
 
   return httpStreamRequest(file, uri, {
-    Referer: `https://www.bilibili.com/${ t }/${ s }${ bid }`,
-    Range: 'bytes=0-',
-    'User-Agent': UA,
-    Origin: 'https://www.bilibili.com'
+    headers: {
+      Referer: `https://www.bilibili.com/${ t }/${ s }${ bid }`,
+      Range: 'bytes=0-',
+      'User-Agent': UA,
+      Origin: 'https://www.bilibili.com'
+    }
   });
 }

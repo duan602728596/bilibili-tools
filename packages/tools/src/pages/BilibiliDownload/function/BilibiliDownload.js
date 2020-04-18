@@ -48,17 +48,27 @@ class BilibiliDownload {
     this.ffmpegEnd();
   };
 
-  async ffmpegAudioInit() {
-    this.audioRequest = await requestDownloadMedia(this.file, this.audioUrl, this.row.type, this.row.bid);
+  async ffmpegDownload() {
+    try {
+      await requestDownloadMedia(
+        this.file,
+        this.row.type === 'au' ? this.audioUrl : this.videoUrl,
+        this.row.type,
+        this.row.bid
+      );
+    } catch (err) {
+      console.error(err);
+    }
+
     this.ffmpegEnd();
   }
 
   ffmpegInit() {
     // 下载音频
-    if (this.row.type === 'au') {
-      this.ffmpegAudioInit();
-
-      return;
+    if (this.audioRequest && this.videoRequest) {
+      //
+    } else {
+      this.ffmpegDownload();
     }
   }
 }

@@ -97,7 +97,7 @@ function BilibiliDownload(props) {
         <ButtonGroup>
           {
             inDownload
-              ? <LinkButton iconCls="icon-no" disabled={ canStop ? true : undefined }>停止下载</LinkButton>
+              ? <LinkButton iconCls="icon-no" disabled={ canStop ? undefined : true }>停止下载</LinkButton>
               : <LinkButton iconCls="icon-tip" onClick={ () => handleDownloadGetUrlClick(item.row) }>开始下载</LinkButton>
           }
           <LinkButton iconCls="icon-remove"

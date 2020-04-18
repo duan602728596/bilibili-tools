@@ -12,11 +12,7 @@ const pipeline = util.promisify(stream.pipeline);
  * @param { object } options: http.request的配置
  */
 export async function httpStreamRequest(file, uri, options) {
-  const req = got.stream(uri, options);
-
-  await pipeline(req, fs.createWriteStream(file));
-
-  return req;
+  await pipeline(got.stream(uri, options), fs.createWriteStream(file));
 }
 
 /**

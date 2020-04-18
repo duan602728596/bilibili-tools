@@ -1,3 +1,5 @@
+import url from 'url';
+import path from 'path';
 import { remote } from 'electron';
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
@@ -24,6 +26,18 @@ const state = createStructuredSelector({
     (data) => data?.toJS?.() ?? []
   )
 });
+
+/* 获取下载的文件名 */
+function getVideoUrlExt(videoUrl) {
+  if (videoUrl && videoUrl.length > 0) {
+    const urlResult = new url.URL(videoUrl[0].value);
+    const parseResult = path.parse(urlResult.pathname);
+
+    return parseResult.ext === '.flv' ? 'flv' : 'mp4';
+  } else {
+    return 'mp4';
+  }
+}
 
 function DownloadDialog(props) {
   const { bilibiliDownload, ffmpegChildList } = useSelector(state);
@@ -53,7 +67,7 @@ function DownloadDialog(props) {
   // 选择保存位置
   async function handleFileSaveClick(event) {
     const row = props.downloadRow;
-    const ext = row.type === 'au' ? 'm4a' : 'mp4';
+    const ext = row.type === 'au' ? 'm4a' : getVideoUrlExt(videoUrl);
     const time = dayjs().format('YYYY.MM.DD.HH.mm.ss');
     const result = await remote.dialog.showSaveDialog({
       defaultPath: `${ row.type }${ row.bid }_${ time }.${ ext }`,
