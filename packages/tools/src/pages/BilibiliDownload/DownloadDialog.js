@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelector, createStructuredSelector } from 'reselect';
-import { Dialog, Form, FormField, ComboBox, LinkButton, Label, TextBox } from 'rc-easyui';
+import { Dialog, Form, FormField, ComboBox, LinkButton, Label, TextBox, CheckBox } from 'rc-easyui';
 import dayjs from 'dayjs';
 import style from './downloadDialog.sass';
 import useMessage from '../../components/useMessage/useMessage';
@@ -46,7 +46,7 @@ function DownloadDialog(props) {
     dialogRef = useRef(null);
   const [videoUrl, setVideoUrl] = useState([]), // 视频地址
     [audioUrl, setAudioUrl] = useState([]),     // 音频地址
-    [formValue, setFormValue] = useState({}),   // 表单的值
+    [formValue, setFormValue] = useState({ deleteFile: true }), // 表单的值
     [loading, setLoading] = useState(false);    // 加载中
   const [Message, message] = useMessage();
 
@@ -54,7 +54,7 @@ function DownloadDialog(props) {
   function handleDialogClose() {
     dialogRef.current.close();
     props.onClose();
-    setFormValue({});
+    setFormValue({ deleteFile: true });
   }
 
   // 表单的change事件
@@ -197,6 +197,9 @@ function DownloadDialog(props) {
               readOnly={ true }
               addonRight={ () => <LinkButton onClick={ handleFileSaveClick }>选择</LinkButton> }
             />
+          </FormField>
+          <FormField name="deleteFile" label="下载完毕后删除临时文件：" labelWidth={ 175 }>
+            <CheckBox value={ formValue.deleteFile } checked={ formValue.deleteFile } />
           </FormField>
         </Form>
       </div>

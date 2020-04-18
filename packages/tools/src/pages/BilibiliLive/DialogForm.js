@@ -124,7 +124,7 @@ function DialogForm(props) {
             />
           </FormField>
           <FormField name="reset" label="错误时重新下载：" labelWidth={ 120 }>
-            <CheckBox value={ formValue.reset } />
+            <CheckBox value={ formValue.reset } checked={ formValue.reset } />
           </FormField>
         </Form>
       </div>

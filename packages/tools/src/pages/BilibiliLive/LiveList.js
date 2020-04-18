@@ -36,7 +36,7 @@ function LiveList(props) {
     setPlayRow(undefined);
   }
 
-  // 停止下载
+  // 停止录制
   function handleStopClick(item) {
     message.confirm({
       msg: '确定要停止录制吗？',

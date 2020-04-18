@@ -36,6 +36,20 @@ function BilibiliDownload(props) {
   const [downloadRow, setDownloadRow] = useState(undefined); // 下载
   const [Message, message] = useMessage();
 
+  // 停止下载
+  function handleStopClick(item) {
+    message.confirm({
+      msg: '确定要停止下载吗？',
+      result: (r) => {
+        if (r) {
+          const index = findIndex(ffmpegChildList, (o) => o.row.id === item.row.id);
+
+          ffmpegChildList[index].child.kill();
+        }
+      }
+    });
+  }
+
   // 关闭事件回调
   function handleDownloadDialogCloseCallback() {
     setDownloadRow(undefined);
@@ -96,9 +110,14 @@ function BilibiliDownload(props) {
       <div className={ style.tableBtn }>
         <ButtonGroup>
           {
-            inDownload
-              ? <LinkButton iconCls="icon-no" disabled={ canStop ? undefined : true }>停止下载</LinkButton>
-              : <LinkButton iconCls="icon-tip" onClick={ () => handleDownloadGetUrlClick(item.row) }>开始下载</LinkButton>
+            inDownload ? (
+              <LinkButton iconCls="icon-no"
+                disabled={ canStop ? undefined : true }
+                onClick={ () => handleStopClick(item) }
+              >
+                停止下载
+              </LinkButton>
+            ) : <LinkButton iconCls="icon-tip" onClick={ () => handleDownloadGetUrlClick(item.row) }>开始下载</LinkButton>
           }
           <LinkButton iconCls="icon-remove"
             disabled={ inDownload ? true : undefined }
