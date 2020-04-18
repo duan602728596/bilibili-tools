@@ -17,15 +17,7 @@ const isDev = process.env.NODE_ENV === 'development';
 
 export default function(info) {
   const nodeModules = path.join(__dirname, '../../node_modules/rc-easyui/dist'),
-    dist = path.join(__dirname, 'dist/scripts'),
-    plugins = [], // babel-plugin
-    copy = [{ from: path.join(nodeModules, 'rc-easyui-min.js'), to: dist }];
-
-  if (isDev) {
-    copy.push({ from: path.join(nodeModules, 'rc-easyui-min.js.map'), to: dist });
-  } else {
-    plugins.unshift(['transform-react-remove-prop-types', { mode: 'remove', removeImport: true }]);
-  }
+    dist = path.join(__dirname, 'dist/scripts');
 
   const config = {
     frame: 'react',
@@ -34,7 +26,6 @@ export default function(info) {
       'prop-types',
       'react-router',
       'react-router-dom',
-      'history',
       'redux',
       'react-redux',
       'redux-actions',
@@ -54,7 +45,6 @@ export default function(info) {
         'electron',
         'got',
         'jsdom',
-        'node-schedule',
         'path',
         'querystring',
         'url'
@@ -63,14 +53,17 @@ export default function(info) {
     },
     js: {
       ecmascript: true,
-      plugins,
+      plugins: isDev ? [['transform-react-remove-prop-types', { mode: 'remove', removeImport: true }]] : undefined,
       exclude: /node_modules/
     },
     html: [
       { template: path.join(__dirname, 'src/index.pug') }
     ],
     plugins: [
-      new CopyWebpackPlugin(copy)
+      new CopyWebpackPlugin([{
+        from: path.join(nodeModules, 'rc-easyui-min.js'),
+        to: dist }
+      ].concat(isDev ? [{ from: path.join(nodeModules, 'rc-easyui-min.js.map'), to: dist }] : []))
     ]
   };
 
