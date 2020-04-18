@@ -101,6 +101,7 @@ function Options(props) {
               liveId: ['required'],
               liveName: ['required']
             }}
+            errorType="tooltip"
             onChange={ handleFormChange }
           >
             <FormField name="liveId" label="直播间ID：">

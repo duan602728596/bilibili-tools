@@ -27,10 +27,11 @@ const state = createStructuredSelector({
 function DialogForm(props) {
   const { bilibiliLiveOptions, ffmpegChildList } = useSelector(state);
   const dispatch = useDispatch();
-  const [playUrl, setPlayUrl] = useState([]), // 直播线路
-    [formValue, setFormValue] = useState({}); // 表单的值
   const formRef = useRef(null),
     dialogRef = useRef(null);
+  const [playUrl, setPlayUrl] = useState([]), // 直播线路
+    [formValue, setFormValue] = useState({}), // 表单的值
+    [loading, setLoading] = useState(false);  // 加载中
   const [Message, message] = useMessage();
 
   // 获取播放信息
@@ -38,6 +39,7 @@ function DialogForm(props) {
     if (!props.playRow) return;
 
     dialogRef.current.open();
+    setLoading(true);
 
     const res = await requestRoomPlayUrl(props.playRow.liveId);
     const urls = res.data.data.durl.map((item, index) => ({
@@ -46,6 +48,7 @@ function DialogForm(props) {
     }));
 
     setPlayUrl(urls);
+    setLoading(false);
   }
 
   // 表单的change事件
@@ -108,6 +111,7 @@ function DialogForm(props) {
             playUrl: ['required'],
             file: ['required']
           }}
+          errorType="tooltip"
           onChange={ handleFormChange }
         >
           <FormField name="playUrl" label="直播线路：">
@@ -126,7 +130,12 @@ function DialogForm(props) {
       </div>
       <div className="dialog-button">
         <LinkButton iconCls="icon-cancel" onClick={ handleDialogClose }>关闭</LinkButton>
-        <LinkButton iconCls="icon-ok" onClick={ handleRecordClick }>开始录制</LinkButton>
+        <LinkButton iconCls="icon-ok"
+          disabled={ loading ? true : undefined }
+          onClick={ handleRecordClick }
+        >
+          开始录制
+        </LinkButton>
       </div>
     </Dialog>,
     Message

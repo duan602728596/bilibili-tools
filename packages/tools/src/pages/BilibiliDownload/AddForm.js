@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelector, createStructuredSelector } from 'reselect';
-import { Dialog, Form, FormField, TextBox, ComboBox, LinkButton } from 'rc-easyui';
+import { Dialog, Form, FormField, TextBox, NumberBox, ComboBox, LinkButton } from 'rc-easyui';
 import style from './addForm.sass';
 import { randomId } from '../../utils/utils';
 import { setDownloadList } from './models/models';
@@ -20,7 +20,8 @@ const AddForm = forwardRef(function(props, ref) {
   const formRef = useRef(null),
     dialogRef = useRef(null);
   const [formValue, setFormValue] = useState({
-    sessData: localStorage.getItem('SESSDATA')
+    sessData: localStorage.getItem('SESSDATA'),
+    page: 1
   }); // 表单的值
 
   // 关闭
@@ -29,6 +30,7 @@ const AddForm = forwardRef(function(props, ref) {
     setFormValue((prevState) => {
       return {
         ...prevState,
+        page: 1,
         bid: undefined,
         type: undefined
       };
@@ -71,8 +73,15 @@ const AddForm = forwardRef(function(props, ref) {
           labelWidth={ 80 }
           rules={{
             bid: ['required'],
-            type: ['required']
+            type: ['required'],
+            page: {
+              myrule: {
+                validator: (value) => value > 0,
+                message: '必须大于0'
+              }
+            }
           }}
+          errorType="tooltip"
           onChange={ handleFormChange }
         >
           <FormField name="bid" label="下载ID：">
@@ -86,6 +95,9 @@ const AddForm = forwardRef(function(props, ref) {
                 { value: 'au', text: 'AU（音频）' }
               ]
             } />
+          </FormField>
+          <FormField name="page" label="分P">
+            <NumberBox value={ formValue.page } />
           </FormField>
           <FormField name="sessData" label="Cookie(SESSDATA)：" labelPosition="top" labelWidth={ 200 }>
             <TextBox style={{ padding: '4px', height: '60px' }} value={ formValue.cookie } multiline={ true } />

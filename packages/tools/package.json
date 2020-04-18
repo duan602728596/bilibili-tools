@@ -18,7 +18,6 @@
     "indexeddb-tools-redux": "^3.0.0",
     "jsdom": "^16.2.2",
     "lodash-es": "^4.17.15",
-    "node-schedule": "^1.3.2",
     "prop-types": "^15.7.2",
     "rc-easyui": "^1.1.0",
     "react": "^16.13.1",

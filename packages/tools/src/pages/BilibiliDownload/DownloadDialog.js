@@ -16,7 +16,8 @@ function DownloadDialog(props) {
     dialogRef = useRef(null);
   const [videoUrl, setVideoUrl] = useState([]), // 视频地址
     [audioUrl, setAudioUrl] = useState([]),     // 音频地址
-    [formValue, setFormValue] = useState({});   // 表单的值
+    [formValue, setFormValue] = useState({}),   // 表单的值
+    [loading, setLoading] = useState(false);    // 加载中
   const [Message, message] = useMessage();
 
   // 关闭
@@ -50,6 +51,8 @@ function DownloadDialog(props) {
 
   // 获取音频地址
   async function getAuUrl() {
+    setLoading(true);
+
     try {
       const { row } = props.downloadRow;
       const res = await requestAudioPlayUrl(row.bid);
@@ -62,20 +65,26 @@ function DownloadDialog(props) {
     } catch (err) {
       console.error(err);
     }
+
+    setLoading(false);
   }
 
   // 获取av地址
   async function getVideoUrl() {
+    setLoading(true);
+
     try {
       const { row } = props.downloadRow;
-      const res = await requestBilibiliVideo(row.type, row.bid);
-      const urlResult = parsingBilibiliVideoUrl(res.data);
+      const res = await requestBilibiliVideo(row.type, row.bid, row.page);
+      const urlResult = await parsingBilibiliVideoUrl(res.data, row);
 
       setVideoUrl(urlResult.videoUrl);
       setAudioUrl(urlResult.audioUrl);
     } catch (err) {
       console.error(err);
     }
+
+    setLoading(false);
   }
 
   // 获取地址
@@ -94,6 +103,15 @@ function DownloadDialog(props) {
     }
   }
 
+  // 开始下载
+  function handleDownloadVideoClick(event) {
+    formRef.current.validate((err) => {
+      if (err) return;
+
+      console.log(formValue);
+    });
+  }
+
   // rules
   function formRules() {
     const row = props.downloadRow?.row;
@@ -104,7 +122,7 @@ function DownloadDialog(props) {
     } else {
       rules.videoUrl = ['required'];
 
-      if (audioUrl && audioUrl.length >= 0) {
+      if (audioUrl && audioUrl.length > 0) {
         rules.audioUrl = ['required'];
       }
     }
@@ -123,6 +141,7 @@ function DownloadDialog(props) {
           model={ formValue }
           labelWidth={ 80 }
           rules={ formRules() }
+          errorType="tooltip"
           onChange={ handleFormChange }
         >
           <Label>下载类型：</Label>
@@ -143,7 +162,12 @@ function DownloadDialog(props) {
       </div>
       <div className="dialog-button">
         <LinkButton iconCls="icon-cancel" onClick={ handleDialogClose }>关闭</LinkButton>
-        <LinkButton iconCls="icon-ok">开始录制</LinkButton>
+        <LinkButton iconCls="icon-ok"
+          disabled={ loading ? true : undefined }
+          onClick={ handleDownloadVideoClick }
+        >
+          开始下载
+        </LinkButton>
       </div>
     </Dialog>,
     Message

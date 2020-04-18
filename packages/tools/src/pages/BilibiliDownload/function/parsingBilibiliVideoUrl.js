@@ -1,4 +1,5 @@
 import { JSDOM } from 'jsdom';
+import { requestPlayUrl } from '../services/services';
 
 /**
  * 解析initialState
@@ -47,7 +48,7 @@ function parsingPlayInfo(scripts) {
 }
 
 /**
- * 根据data获取视频和音频地址
+ * 根据data.dash获取视频和音频地址
  * @param { object } data
  */
 function getVideoAndAudioUrl(data) {
@@ -75,10 +76,25 @@ function getVideoAndAudioUrl(data) {
 }
 
 /**
+ * 根据data.durl获取视频地址
+ * @param { object } data
+ */
+export function getVideoUrl(data) {
+  return {
+    videoUrl: [{
+      value: data.durl[0].url,
+      text: '地址1'
+    }],
+    audioUrl: []
+  };
+}
+
+/**
  * 视频下载
  * @param { string } html: html字符串
+ * @param { object } row
  */
-function parsingBilibiliVideoUrl(html) {
+async function parsingBilibiliVideoUrl(html, row) {
   const dom = new JSDOM(html);
   const { document } = dom.window;
 
@@ -89,6 +105,19 @@ function parsingBilibiliVideoUrl(html) {
   // 需要同时下载视频或者音频，然后合并
   if (playInfo?.data?.dash) {
     return getVideoAndAudioUrl(playInfo.data);
+  } else if (playInfo?.data?.durl) {
+    return getVideoUrl(playInfo.data);
+  }
+
+  // 网页上没有需要的数据，需要从接口中获取
+  const { page = 1, sessData, type, bid } = row,
+    cid = initialState.videoData.pages[page - 1].cid,
+    { data: playUrl } = await requestPlayUrl(type === 'av' ? bid : initialState.aid, cid, sessData);
+
+  if (playUrl?.data?.dash) {
+    return getVideoAndAudioUrl(playUrl.data);
+  } else if (playUrl?.data?.durl) {
+    return getVideoUrl(playUrl.data);
   }
 }
 
