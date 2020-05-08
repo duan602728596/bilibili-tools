@@ -1,5 +1,5 @@
 {
-  "name": "@bilibili-tools/ffmpeg",
+  "name": "@bilibili-tools/bin",
   "version": "0.0.0",
   "main": "lib/index.js",
   "scripts": {

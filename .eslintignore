@@ -2,3 +2,5 @@
 node_modules
 
 .sweet
+packages/main/lib
+packages/bin/lib

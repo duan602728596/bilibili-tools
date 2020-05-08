@@ -1,5 +1,5 @@
 import { shell } from 'electron';
-import ffmpegPath from '@bilibili-tools/ffmpeg';
+import { ffmpegPath } from '@bilibili-tools/bin';
 
 /**
  * 使用默认浏览器打开网址
@@ -30,5 +30,5 @@ export function randomId(len) {
   return result;
 }
 
-/* ffmpeg */
-export const ffmpeg = ffmpegPath() ?? 'ffmpeg';
+/* bin */
+export const ffmpeg = ffmpegPath();

@@ -40,7 +40,7 @@ export default function(info) {
     },
     externals: {
       ...nodeExternals([
-        '@bilibili-tools/ffmpeg',
+        '@bilibili-tools/bin',
         'child_process',
         'electron',
         'fs',
