@@ -8,12 +8,16 @@ const BilibiliLive = asyncModule(
 const BilibiliDownload = asyncModule(
   () => import(/* webpackChunkName: 'bilibiliDownload' */ '../pages/BilibiliDownload/index')
 );
+const YoutubeDownload = asyncModule(
+  () => import(/* webpackChunkName: 'youtubeDownload' */ '../pages/YoutubeDownload/index')
+);
 
 function Routers(props) {
   const routes = useRoutes([
     { path: '/', element: <Index /> },
     { path: 'BilibiliLive/*', element: <BilibiliLive /> },
-    { path: 'BilibiliDownload/*', element: <BilibiliDownload /> }
+    { path: 'BilibiliDownload/*', element: <BilibiliDownload /> },
+    { path: 'YoutubeDownload/*', element: <YoutubeDownload /> }
   ]);
 
   return routes;

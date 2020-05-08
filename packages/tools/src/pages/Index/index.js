@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import {
   VideoCameraOutlined as IconVideoCameraOutlined,
-  CloudDownloadOutlined as IconCloudDownloadOutlined
+  CloudDownloadOutlined as IconCloudDownloadOutlined,
+  YoutubeOutlined as IconYoutubeOutlined
 } from '@ant-design/icons';
 import { Panel } from 'rc-easyui';
 import style from './index.sass';
@@ -22,6 +23,12 @@ const routes = [
     href: '/BilibiliDownload',
     name: 'B站视频下载',
     color: style.colorLime
+  },
+  {
+    icon: <IconYoutubeOutlined />,
+    href: '/YoutubeDownload',
+    name: 'Youtube视频下载',
+    color: style.colorGold
   }
 ];
 
