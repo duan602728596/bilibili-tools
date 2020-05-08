@@ -1,7 +1,7 @@
 import childProcess from 'child_process';
 import fs from 'fs';
+import { ffmpegPath } from '@bilibili-tools/bin';
 import { findIndex } from 'lodash-es';
-import { ffmpeg } from '../../../utils/utils';
 import store from '../../../store/store';
 import { setDownloadList, setFfmpegChildList } from '../models/models';
 import { requestDownloadMedia } from '../services/services';
@@ -29,7 +29,7 @@ class BilibiliDownload {
     if (this.videoUrl && this.audioUrl && this.deleteFile) {
       const videoFile = `${ this.file }.video.m4s`,
         audioFile = `${ this.file }.audio.m4s`;
-      
+
       await Promise.all([
         fs.promises.unlink(videoFile),
         fs.promises.unlink(audioFile)
@@ -80,7 +80,7 @@ class BilibiliDownload {
         )
       ]);
 
-      this.child = childProcess.spawn(ffmpeg, [
+      this.child = childProcess.spawn(ffmpegPath(), [
         '-i',
         videoFile,
         '-i',

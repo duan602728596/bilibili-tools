@@ -1,7 +1,7 @@
 import childProcess from 'child_process';
 import path from 'path';
+import { ffmpegPath } from '@bilibili-tools/bin';
 import { findIndex } from 'lodash-es';
-import { ffmpeg } from '../../../utils/utils';
 import store from '../../../store/store';
 import { setFfmpegChildList, setBilibiliLiveOptions } from '../models/models';
 
@@ -75,7 +75,7 @@ class BilibiliLive {
   ffmpegInit() {
     const file = this.getFile();
 
-    this.child = childProcess.spawn(ffmpeg, [
+    this.child = childProcess.spawn(ffmpegPath(), [
       '-user_agent',
       UA,
       '-i',
