@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelector, createStructuredSelector } from 'reselect';
-import { Dialog, Form, FormField, TextBox, NumberBox, ComboBox, LinkButton } from 'rc-easyui';
+import { Dialog, Form, FormField, TextBox, ComboBox, LinkButton } from 'rc-easyui';
 import style from './addForm.sass';
 import { randomId } from '../../utils/utils';
 import { setDownloadList } from './models/models';
@@ -10,7 +10,7 @@ import { setDownloadList } from './models/models';
 const state = createStructuredSelector({
   // 下载列表
   downloadList: createSelector(
-    ({ bilibiliDownload: $$bilibiliDownload }) => $$bilibiliDownload?.get?.('downloadList'),
+    ({ youtubeDownload: $$youtubeDownload }) => $$youtubeDownload?.get?.('downloadList'),
     (data) => data?.toJS?.() ?? []
   )
 });
@@ -21,19 +21,24 @@ const AddForm = forwardRef(function(props, ref) {
   const formRef = useRef(null),
     dialogRef = useRef(null);
   const [formValue, setFormValue] = useState({
-    sessData: localStorage.getItem('SESSDATA'),
-    page: 1
+    youtubeId: undefined, // youtube的视频id
+    type: 'video'         // 类型，video 视频，live 直播
   }); // 表单的值
+
+  // 表单的change事件
+  function handleFormChange(key, value) {
+    setFormValue((prevState) => {
+      return { ...prevState, [key]: value };
+    });
+  }
 
   // 关闭
   function handleCloseClick() {
     dialogRef.current.close();
     setFormValue((prevState) => {
       return {
-        ...prevState,
-        page: 1,
-        bid: undefined,
-        type: undefined
+        youtubeId: undefined,
+        type: 'video'
       };
     });
   }
@@ -43,24 +48,11 @@ const AddForm = forwardRef(function(props, ref) {
     formRef.current.validate((err) => {
       if (err) return;
 
-      const sessData = formValue.sessData;
       const id = randomId(30);
-
-      // 缓存cookie
-      if (sessData && !/^\s*$/.test(sessData)) {
-        localStorage.setItem('SESSDATA', sessData);
-      }
 
       downloadList.push({ id, ...formValue });
       downloadList |> setDownloadList |> dispatch;
       handleCloseClick();
-    });
-  }
-
-  // 表单的change事件
-  function handleFormChange(key, value) {
-    setFormValue((prevState) => {
-      return { ...prevState, [key]: value };
     });
   }
 
@@ -72,38 +64,21 @@ const AddForm = forwardRef(function(props, ref) {
         <Form ref={ formRef }
           model={ formValue }
           labelWidth={ 80 }
-          rules={{
-            bid: ['required'],
-            type: ['required'],
-            page: {
-              myrule: {
-                validator: (value) => value > 0,
-                message: '必须大于0'
-              }
-            }
-          }}
+          rules={{ youtubeId: ['required'], type: ['required'] }}
           errorType="tooltip"
           onChange={ handleFormChange }
         >
-          <FormField name="bid" label="下载ID：">
-            <TextBox value={ formValue.bid } />
+          <FormField name="youtubeId" label="视频ID：">
+            <TextBox value={ formValue.youtubeId } />
           </FormField>
           <FormField name="type" label="下载类型：">
             <ComboBox value={ formValue.type } data={
               [
-                { value: 'bv', text: 'BV（视频）' },
-                { value: 'av', text: 'AV（视频）' },
-                { value: 'au', text: 'AU（音频）' }
+                { value: 'video', text: '视频' },
+                { value: 'live', text: '直播' }
               ]
             } />
           </FormField>
-          <FormField name="page" label="分P">
-            <NumberBox value={ formValue.page } />
-          </FormField>
-          <FormField name="sessData" label="Cookie(SESSDATA)：" labelPosition="top" labelWidth={ 200 }>
-            <TextBox style={{ padding: '4px', height: '60px' }} value={ formValue.cookie } multiline={ true } />
-          </FormField>
-          <p className={ style.desc }>这个是cookie内的SESSDATA字段。部分高清视频需要该字段。请自行抓取该字段填入此处。</p>
         </Form>
       </div>
       <div className="dialog-button">

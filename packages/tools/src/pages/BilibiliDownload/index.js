@@ -16,7 +16,7 @@ import models, { setDownloadList } from './models/models';
 /* state */
 const state = createStructuredSelector({
   // 下载列表
-  bilibiliDownload: createSelector(
+  downloadList: createSelector(
     ({ bilibiliDownload: $$bilibiliDownload }) => $$bilibiliDownload?.get?.('downloadList'),
     (data) => data?.toJS?.() ?? []
   ),
@@ -29,7 +29,7 @@ const state = createStructuredSelector({
 
 /* B站视频下载 */
 function BilibiliDownload(props) {
-  const { bilibiliDownload, ffmpegChildList } = useSelector(state);
+  const { downloadList, ffmpegChildList } = useSelector(state);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const addFormRef = useRef(null);
@@ -74,11 +74,11 @@ function BilibiliDownload(props) {
       msg: '确定要删除吗？',
       result: (r) => {
         if (r) {
-          const index = findIndex(bilibiliDownload, (o) => o.id === row.id);
+          const index = findIndex(downloadList, (o) => o.id === row.id);
 
           if (index >= 0) {
-            bilibiliDownload.splice(index, 1);
-            bilibiliDownload |> setDownloadList |> dispatch;
+            downloadList.splice(index, 1);
+            downloadList |> setDownloadList |> dispatch;
           }
         }
       }
@@ -133,7 +133,7 @@ function BilibiliDownload(props) {
   return [
     <Fragment key="panel">
       <BasicPanel header={ panelHeaderRender }>
-        <DataGrid data={ bilibiliDownload }>
+        <DataGrid data={ downloadList }>
           <GridColumn field="bid" title="下载ID" />
           <GridColumn field="type" title="下载类型" render={ downloadTypeRender } />
           <GridColumn title="操作" render={ handleOperationRender } />
