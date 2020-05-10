@@ -13,7 +13,7 @@ function Index(props) {
   function panelHeaderRender() {
     return (
       <ButtonGroup key="header">
-        <LinkButton iconCls="icon-search">添加下载队列</LinkButton>
+        <LinkButton iconCls="icon-search">添加Youtube视频下载队列</LinkButton>
         <LinkButton iconCls="icon-undo" onClick={ (event) => navigate('../') }>返回</LinkButton>
       </ButtonGroup>
     );

@@ -89,7 +89,7 @@ function BilibiliDownload(props) {
   function panelHeaderRender() {
     return (
       <ButtonGroup key="header">
-        <LinkButton iconCls="icon-search" onClick={ handleAddClick }>添加下载队列</LinkButton>
+        <LinkButton iconCls="icon-search" onClick={ handleAddClick }>添加B站视频下载队列</LinkButton>
         <LinkButton iconCls="icon-undo" onClick={ (event) => navigate('../') }>返回</LinkButton>
       </ButtonGroup>
     );
