@@ -16,7 +16,7 @@ import { setDownloadList, setFfmpegChildList } from './models/models';
 
 /* state */
 const state = createStructuredSelector({
-  bilibiliDownload: createSelector(
+  downloadList: createSelector(
     ({ bilibiliDownload: $$bilibiliDownload }) => $$bilibiliDownload?.get?.('downloadList'),
     (data) => data?.toJS?.() ?? []
   ),
@@ -40,7 +40,7 @@ function getVideoUrlExt(videoUrl) {
 }
 
 function DownloadDialog(props) {
-  const { bilibiliDownload, ffmpegChildList } = useSelector(state);
+  const { downloadList, ffmpegChildList } = useSelector(state);
   const dispatch = useDispatch();
   const formRef = useRef(null),
     dialogRef = useRef(null);
@@ -146,7 +146,7 @@ function DownloadDialog(props) {
       download.ffmpegInit();
       ffmpegChildList.push(download);
       ffmpegChildList |> setFfmpegChildList |> dispatch;
-      bilibiliDownload |> setDownloadList |> dispatch;
+      downloadList |> setDownloadList |> dispatch;
       message.alert({ msg: '开始下载。' });
       handleDialogClose();
     });

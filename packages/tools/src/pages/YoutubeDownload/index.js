@@ -1,4 +1,4 @@
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import style from './index.sass';
 import BasicPanel from '../../components/BasicPanel/BasicPanel';
 import useMessage from '../../components/useMessage/useMessage';
 import AddForm from './AddForm';
+import DownloadDialog from './DownloadDialog';
 import models, { setDownloadList } from './models/models';
 
 /* state */
@@ -30,6 +31,7 @@ const state = createStructuredSelector({
 function Index(props) {
   const { downloadList, ffmpegChildList } = useSelector(state);
   const dispatch = useDispatch();
+  const [downloadRow, setDownloadRow] = useState(undefined); // 下载
   const navigate = useNavigate();
   const addFormRef = useRef(null);
   const [Message, message] = useMessage();
@@ -52,6 +54,20 @@ function Index(props) {
         }
       }
     });
+  }
+
+  // 关闭事件回调
+  function handleDownloadDialogCloseCallback() {
+    setDownloadRow(undefined);
+  }
+
+  // 开始下载
+  function handleDownloadClick(row) {
+    if (row.type === 'live') {
+      // 直播
+    } else {
+      setDownloadRow(row); // 视频
+    }
   }
 
   // 添加下载队列
@@ -94,7 +110,7 @@ function Index(props) {
               >
                 停止下载
               </LinkButton>
-            ) : <LinkButton iconCls="icon-tip">开始下载</LinkButton>
+            ) : <LinkButton iconCls="icon-tip" onClick={ () => handleDownloadClick(item.row) }>开始下载</LinkButton>
           }
           <LinkButton iconCls="icon-remove"
             disabled={ inDownload ? true : undefined }
@@ -117,6 +133,7 @@ function Index(props) {
         </DataGrid>
       </BasicPanel>
       <AddForm ref={ addFormRef } />
+      <DownloadDialog downloadRow={ downloadRow } onClose={ handleDownloadDialogCloseCallback } />
     </Fragment>,
     Message
   ];
